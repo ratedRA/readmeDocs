@@ -95,3 +95,53 @@ http://localhost:8983/solr/search_twitter/schema/fields
 
 -	indexed field
 	-	field on which search would happen - indexed = true 
+	- we should minimize the total indexed fields
+
+- stored field
+	-	field for displaying in the documents
+	- 	row-oriented - (documetns are row-wise)
+
+- DocValues field
+	- column-oriented 	
+	- recommended when faceting/sorting/grouping because it is much more efficient in terms of speed and RAM memory.
+
+- Multivalues fields
+	- fields that contains more than one value in a document.
+	
+- Dynamic fields
+	- standard field definition
+	
+	```
+	<field name="user_name" type="string" indexed="true" stored="true"/>
+	```
+	- dynamic field deifinition
+	
+	```
+	<dynamicField name = "*_ss" type="string"
+ indexed="true" stored="true?>
+ ```
+ -	used for modeling documents with plenty of fields 
+ - adding new indexing sources
+ - in the above definition, each field with suffix _ss will inherit the property type = string and indexed=true and stored=true
+ - we can then query any of those field by their full name like - 
+ ```
+ http/localhost:8983/solr/{{solr_core}}/select?q=lan_ss:eng
+ ```
+ 
+- Copy fields
+ 	- used to populate one field from one or more fields.
+ 	- use to query over a string among multiple fields
+ 	- need to provide source and destination while defining copyfields
+ 	- source - all the field names
+ 	- destination - final name of the copyfield
+ 	- for this field the multivalued should be set to true.
+ 	- ex - q=solr&df={{copyFieldName}}
+ 	- df - default field
+
+- Field type
+	- primitiveFieldType - AbstractEnumField, BoolField, NumbericField, StrField
+	- TextField
+	- Others specialized types
+	- we should use string type instead of text when we dont want to analyze the field in anyway.
+ 
+ 
