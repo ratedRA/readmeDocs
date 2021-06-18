@@ -33,10 +33,12 @@
 
 <p>a solr core represents a single physical solr index. Each solr home directory can host multiple cores for a server and each core has a separate directory. A sole core directory has two files -
 </p>
-	1. conf -  it has
+	<p>1. conf -  it has
 		1. managed-schema - configuration file that governs the indexed structure
 		2. solrConfig.xml - main solr config file that defines how a core should behave
 	2. data - actual data
+</p>
+
 - <b>difference between q and fq</b>
 	- q returns most relevant documents before lesser relevant, while fq have no effect on relevancy
 	- fq caches the result
@@ -145,3 +147,43 @@ http://localhost:8983/solr/search_twitter/schema/fields
 	- we should use string type instead of text when we dont want to analyze the field in anyway.
  
  
+## Searching. 
+-	solr provides three stages for building custom queries - RequestHandlers, SearchCompomnent, and QueryParser
+
+### the fq and q params - 
+
+
+- query steps - 1. finding the documents, 2. ordering the documents (based on relevancy score)
+
+### Standard query analyzer
+
+- pro vs EdismaxQParser - 
+	allow a variety of structured queries
+
+- con vs EdismaxQParser - 
+	intolreant of syntax errors
+
+- query has two components - terms and operators
+- 	Wildcard searches
+	<p>q = te?t (will return all docs with te(any character)t, like test)
+	q = * (will match all documents)</p>
+-	Fuzzy searches
+	<p>
+	it works on the priciple of edit distance. it discovers term which are similar to specified term wihtout necessarily being exact match. we use <b>Tilde(~)</b> symbol for fuzzy search. For example - if we want to search terms similar to car, we'll use <b> q = car~ . car~1 represents the terms similar to car with max edit distance equal to 1.</b></p>
+-	Range search
+<p> specifies range of values for a field. ex - popularity:\[6 TO 9]\(6 & 9 inclusive, to exclude use {}). unbounded range-  \[6 TO *]\ </p>
+
+- Boosting a term
+	<p> q = power adapter^4 (boost factor 4)
+
+## Faceted search
+- 	used to query over a particluar group. like in ecomerce we have differnt filter, like a filter on creator could be one facet and it could have different creators with their counts.
+
+## Implementing faceting
+- faceting types -
+	-	field faceting
+	- query faceting 
+	- range faceting (like filter for prices)
+	- query - <b>/search?q=*&facet=true&facet.field=manu&facet.field=popularity</b>
+	- using facet range for prices. range from 0 to 500 with a gap of 100. -<b> /search/?q=*&facet=true&facet.field=manu&face.range=price&f.price.facet.range.start=0&f.price.facet.range.end=500&f.price.facet.range.gap=100</b>
+	
