@@ -28,6 +28,35 @@
 - inverted index -> Solr is able to achieve fast search responses because, instead of searching the text directly, it searches an index instead. This type of index is called an inverted index, because it inverts a page-centric data structure (page->words) to a keyword-centric data structure (word->pages).
 
 
+## Solr setup
+- Solr collection
+ 	-	upload the config to zookeeper
+ 	
+ 	```
+ 	bin/solr zk upconfig -n zk_config_name -d /path/to/config/directory -z localhost:2181,localhost:2182,localhost:2183
+ 	```
+ 	-	Hit the below curl to create the collection
+ 	
+ 	```
+ 	curl 'localhost:8983/solr/admin/collections?action=CREATE&name=solr_collection_namey&numShards=1&replicationFactor=1&maxShardsPerNode=1&collection.configName=zk_config_name'
+ 	```
+ 	-	delete a solr collection
+
+ 	```
+ 	curl 'localhost:8983/solr/admin/collections?action=DELETE&name=collection_name'
+ 	```
+-	solr core
+
+```
+curl 'http://localhost:8983/solr/admin/cores?action=CREATE&name=core-Name&instanceDir={path_to_dir}
+```
+
+-	 start solr with dedugger
+
+```
+bin/solr start -f -a "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=9000
+```
+
 ## SolrCore
 - jetty web server hosts solr and jetty web server runs over JVM
 
